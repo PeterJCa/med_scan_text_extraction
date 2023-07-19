@@ -93,11 +93,6 @@ def test_parse(doc_1_maria, doc_2_virat, doc_3_empty):
         'directions': "Use two tablets daily for three months",
         'refills': "3"
     }
-    assert record_virat['patient_name'] == "Virat Kohli"
-    assert record_virat['patient_address'] == "2 cricket blvd, New Delhi"
-    assert record_virat['medicines'] == "Omeprazole 40 mg"
-    assert record_virat['directions'] == "Use two tablets daily for three months"
-    assert record_virat['refills'] == "3"
 
     record_empty = doc_3_empty.parse()
     assert record_empty =={

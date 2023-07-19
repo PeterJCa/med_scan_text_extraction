@@ -1,7 +1,10 @@
 from pdf2image import convert_from_path
 import pytesseract
 import util
-import os
+
+from parser_prescription import PrescriptionParser
+from parser_patient_details import PatientDetailsParser
+
 
 pytesseract.pytesseract.tesseract_cmd=r'G:\Program Files\Tesseract-OCR\tesseract.exe'
 POPPLER_PATH = r'G:\poppler-23.07.0\Library\bin'
@@ -15,14 +18,16 @@ def extract(file_path, file_format):
         processed_imaage = util.preprocess_image(page)
         text = pytesseract.image_to_string(processed_imaage, lang='eng')
         document_text += '\n' + text
-    return document_text
 
-    # if file_format == 'prescription':
-    #     pass # extract data from prescription
-    # elif file_format == 'patient_details':
-    #     pass  # extract data from patien details
+    # extract fields from text
+    if file_format == 'prescription':
+        extracted_data = PrescriptionParser(document_text).parse()
+    elif file_format == 'patient_details':
+        extracted_data = PatientDetailsParser(document_text).parse()
+    else:
+        raise Exception(f"Invalid document format: {file_format}")
+    return extracted_data
 
 if __name__ == "__main__":
-    data = extract(r'backend\resources\patient_details\pd_1.pdf', 'prescription')
+    data = extract(r'backend\resources\prescription\pre_1.pdf', 'prescription')
     print(data)
-    print(os.getcwd())

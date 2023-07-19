@@ -10,6 +10,6 @@ def preprocess_image(img):
         cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
         cv2.THRESH_BINARY,
         61,
-        9
+        11
     )
     return processed_imaage

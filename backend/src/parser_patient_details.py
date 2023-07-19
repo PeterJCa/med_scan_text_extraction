@@ -8,7 +8,6 @@ import re
 
 from backend.src.parser_generic import MedicalDocParser
 
-
 class PatientDetailsParser(MedicalDocParser):
     def __init__(self, text):
         MedicalDocParser.__init__(self, text)
@@ -16,20 +15,18 @@ class PatientDetailsParser(MedicalDocParser):
     def parse(self):
         return {
             'patient_name': self.get_field('patient_name'),
-            'patient_address': self.get_field('patient_address'),
-            'medicines': self.get_field('medicines'),
-            'directions': self.get_field('directions'),
-            'refills': self.get_field('refills')
+            'phone_number': self.get_field('phone_number'),
+            'hepb_vaccination': self.get_field('hepb_vaccination'),
+            'medical_problems': self.get_field('medical_problems')
         }
     
     def get_field(self, field_name):
         
         pattern_dict = {
-            'patient_name': ('Name:\s*([A-Za-z\s-]+?)\s*(?=\| Date:|Date:)', 0),
-            'patient_address': ('Address:(.*)\n', 0),
-            'medicines': ('Address:[^\n]*\n(.*)Directions:', re.DOTALL),
-            'directions': ('Directions:.*?\n*(.*?)\nRefill:', re.DOTALL),
-            'refills': ('Refill:.*(\d).*times', 0)
+            'patient_name': ('Birth Date\n\n([A-Za-z\s-]+?)\s(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)', 0),
+            'phone_number': ('(\(\d{3}\)\s\d{3}-\d{4})\sWeight', 0),
+            'hepb_vaccination': ('Have you had the Hepatitis B vaccination\?.*(Yes|No)', re.DOTALL),
+            'medical_problems': ('asthma, seizures, headaches[^a-zA-Z]*([a-zA-Z].*)', 0)
         }
 
         pattern_object = pattern_dict.get(field_name)
@@ -41,25 +38,45 @@ class PatientDetailsParser(MedicalDocParser):
 
 if __name__ == '__main__':
     document_text = '''
+17/12/2020
 
-Dr John Smith, M.D
-2 Non-Important Street,
-New York, Phone (000)-111-2222
+Patient Medical Record
 
+Patient Information Birth Date
 
-Name: Marta Sharapova Date: 9/11/2022
-Address: 9 tennis court, new Russia, DC
-Prednisone 20 mg
-Lialda 2.4 gram
+Kathy Crawford May 6 1972
 
-Directions:
-Prednisone, Taper 5 mg every 3 days,
+(737) 988-0851 Weight’
 
-Finish in 2.5 weeks
-Lialda - take 2 pill everyday for 1 month
+9264 Ash Dr 95
 
-Refill: _2_times
+New York City, 10005 '
+
+United States Height:
+190
+
+In Case of Emergency
+ee J
+Simeone Crawford 9266 Ash Dr
+New York City, New York, 10005
+Home phone United States
+(990) 375-4621
+Work phone
+Genera! Medical History
+nn i
+Chicken Pox (Varicella): Measies:
+IMMUNE
+
+IMMUNE
+Have you had the Hepatitis B vaccination?
+
+No
+
+List any Medical Problems (asthma, seizures, headaches}:
+
+Migraine
+
 '''
 
-    pp = PrescriptionParser(document_text)
+    pp = PatientDetailsParser(document_text)
     print(pp.parse())
